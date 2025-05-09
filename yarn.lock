@@ -2801,10 +2801,10 @@
   resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.3.tgz#c6a60686d953dbd1b1d45e66f4ecdbd5d471b4d0"
   integrity sha512-0LbEEx1zxrYB3pgpd1M5lEhLcXjKJnYghvhTRgaBeUivLHMDM1TzF3IJ6hXU2+8uA4Xz+5BA63mtZo5DjVT8iA==
 
-"@types/vue-the-mask@0.11.1":
-  version "0.11.1"
-  resolved "https://registry.yarnpkg.com/@types/vue-the-mask/-/vue-the-mask-0.11.1.tgz#e3584cbec96b2976742235b50725ea14d1e404b7"
-  integrity sha512-QoXwt8gc35YW+a5kbQar57aA5ozbnHBUxFxl2CiRj4WnqbnCxMijJ8JpxdSqYvqSa3+wiuRE/w4Qpx05Sfo2zA==
+"@types/vue-the-mask@0.11.5":
+  version "0.11.5"
+  resolved "https://registry.yarnpkg.com/@types/vue-the-mask/-/vue-the-mask-0.11.5.tgz#d39ae9d03bed0f0c625e2669807a06bcfd2f62f1"
+  integrity sha512-kO47HeoXxzBgJUK70CihEXgsyPrB1uTinFBc/R2gubD62zMV/dSg7XhFbnEF1zcRKA9MBDGVZm3VicmSFDngdQ==
   dependencies:
     vue "^2.6.10"
 
