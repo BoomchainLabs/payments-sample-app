@@ -31,9 +31,9 @@
                 v-for="entry in delegateBatch"
                 :key="entry.contractTradeId"
               >
-                <v-list-item-title>{{
-                  entry.contractTradeId
-                }}</v-list-item-title>
+                <v-list-item-title>
+                  {{ entry.contractTradeId }}
+                </v-list-item-title>
                 <template #append>
                   <v-chip
                     v-if="batchFundResults[entry.contractTradeId] === 'success'"
@@ -239,7 +239,7 @@ const batchFundComplete = computed(
   () =>
     delegateBatch.value.length > 0 &&
     delegateBatch.value.every(
-      (e) =>
+      (e: DelegateFundingEntry) =>
         batchFundResults.value[e.contractTradeId] === 'success' ||
         batchFundResults.value[e.contractTradeId] === 'error',
     ),
