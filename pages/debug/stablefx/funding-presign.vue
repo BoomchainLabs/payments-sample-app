@@ -141,7 +141,10 @@
                 </v-list-item-title>
                 <template #append>
                   <v-chip
-                    v-if="entry.traderSignature && entry.funderSignature"
+                    v-if="
+                      !!entry.funderSignature &&
+                      (!entry.traderTypedData || !!entry.traderSignature)
+                    "
                     color="success"
                     size="small"
                   >
@@ -274,7 +277,8 @@ const allDelegateSigned = computed(
   () =>
     delegateBatch.value.length > 0 &&
     delegateBatch.value.every(
-      (e: DelegateFundingEntry) => !!e.traderSignature && !!e.funderSignature,
+      (e: DelegateFundingEntry) =>
+        (!e.traderTypedData || !!e.traderSignature) && !!e.funderSignature,
     ),
 )
 
@@ -348,16 +352,18 @@ const makeApiCall = async () => {
       const resp =
         await $stablefxTradesApi.getFundingPresignData(presignPayload)
       const data = (resp as any)?.data ?? resp
-      const results: any[] = Array.isArray(data) ? data : [data]
-      const batch: DelegateFundingEntry[] = tradeIds.map(
-        (tradeId: string, idx: number) => ({
-          contractTradeId: tradeId,
-          traderTypedData: results[idx]?.traderPermitTypedData ?? null,
-          funderTypedData: results[idx]?.funderPermitTypedData ?? null,
-          traderSignature: '',
-          funderSignature: '',
-        }),
-      )
+      const traderTypedData =
+        data?.traderPermitTypedData ?? data?.batchTraderPermitTypedData ?? null
+      const funderTypedData =
+        data?.funderPermitTypedData ?? data?.batchFunderPermitTypedData ?? null
+      // All entries share the same typed data — one batch signature covers all trades
+      const batch: DelegateFundingEntry[] = tradeIds.map((tradeId: string) => ({
+        contractTradeId: tradeId,
+        traderTypedData,
+        funderTypedData,
+        traderSignature: '',
+        funderSignature: '',
+      }))
       store.setDelegateFundingBatch(batch)
     } else {
       const presignPayload: FundingPresignPayload = {
@@ -401,42 +407,45 @@ const signWithCircle = async () => {
       formData.fundingMode === 'net_delegate'
     ) {
       const batch = [...store.getDelegateFundingBatch]
-      const total = batch.length * 2
+      const funderWalletId = store.getFunderWalletId || store.getWalletId
+      const funderApiKey = store.getFunderWalletApiKey || store.getWalletApiKey
+      const funderSecret = store.getFunderEntitySecret || store.getEntitySecret
+      const firstEntry = batch[0]
+      let traderSignature = ''
 
-      for (let i = 0; i < batch.length; i++) {
-        const entry = { ...batch[i] }
-
-        signingProgressText.value = `Signing trader permit ${i + 1} of ${batch.length}...`
-        signingProgress.value = Math.round(((i * 2) / total) * 100)
-
+      if (firstEntry.traderTypedData) {
+        signingProgressText.value = 'Signing trader permit...'
+        signingProgress.value = 0
         const traderResult = await $circleWalletsApi.signTypedDataComplete(
           store.getWalletId,
-          JSON.stringify(entry.traderTypedData),
+          JSON.stringify(firstEntry.traderTypedData),
           store.getEntitySecret,
           store.getWalletApiKey,
         )
-        entry.traderSignature =
+        traderSignature =
           traderResult?.data?.signature || traderResult?.signature || ''
-
-        signingProgressText.value = `Signing funder permit ${i + 1} of ${batch.length}...`
-        signingProgress.value = Math.round(((i * 2 + 1) / total) * 100)
-
-        const funderWalletId = store.getFunderWalletId || store.getWalletId
-        const funderResult = await $circleWalletsApi.signTypedDataComplete(
-          funderWalletId,
-          JSON.stringify(entry.funderTypedData),
-          store.getEntitySecret,
-          store.getWalletApiKey,
-        )
-        entry.funderSignature =
-          funderResult?.data?.signature || funderResult?.signature || ''
-
-        batch[i] = entry
+        signingProgress.value = 50
       }
+
+      signingProgressText.value = 'Signing funder permit...'
+      const funderResult = await $circleWalletsApi.signTypedDataComplete(
+        funderWalletId,
+        JSON.stringify(firstEntry.funderTypedData),
+        funderSecret,
+        funderApiKey,
+      )
+      const funderSignature =
+        funderResult?.data?.signature || funderResult?.signature || ''
+
+      const updatedBatch = batch.map((entry) => ({
+        ...entry,
+        traderSignature,
+        funderSignature,
+      }))
 
       signingProgress.value = 100
       signingProgressText.value = 'All signatures collected.'
-      store.setDelegateFundingBatch(batch)
+      store.setDelegateFundingBatch(updatedBatch)
     } else {
       let typedData = response.value.data?.typedData || response.value.typedData
       if (!typedData && response.value.data) {
