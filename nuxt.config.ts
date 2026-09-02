@@ -53,6 +53,7 @@ export default defineNuxtConfig({
     '~/plugins/businessAccount/depositsApi.ts',
     '~/plugins/businessAccount/payoutsApi.ts',
     '~/plugins/businessAccount/transfersApi.ts',
+    '~/plugins/daa/index.ts',
     '~/plugins/cryptoPaymentMetadataApi.ts',
     '~/plugins/cryptoPaymentsApi.ts',
     '~/plugins/beta/addressBookApi.ts',

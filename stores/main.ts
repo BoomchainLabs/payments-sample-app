@@ -14,12 +14,19 @@ export interface DelegateFundingEntry {
   funderSignature: string
 }
 
+export interface RiskSignals {
+  ipAddress: string
+  sessionId: string
+  deviceId: string
+}
+
 interface MainState {
   bearerToken: string
   walletApiKey: string
   entitySecret: string
   walletId: string
   funderWalletId: string
+  riskSignals: RiskSignals
   apiRequest: ApiRequest
   delegateFundingBatch: DelegateFundingEntry[]
 }
@@ -46,6 +53,11 @@ export const useMainStore = defineStore('main', {
       typeof window !== 'undefined'
         ? localStorage.getItem('funderWalletId') || ''
         : '',
+    riskSignals: {
+      ipAddress: '',
+      sessionId: '',
+      deviceId: '',
+    },
     apiRequest: {
       url: '',
       payload: {},
@@ -60,6 +72,7 @@ export const useMainStore = defineStore('main', {
     getEntitySecret: (state): string => state.entitySecret,
     getWalletId: (state): string => state.walletId,
     getFunderWalletId: (state): string => state.funderWalletId,
+    getRiskSignals: (state): RiskSignals => state.riskSignals,
     getRequestPayload: (state): any => state.apiRequest.payload,
     getRequestResponse: (state): any => state.apiRequest.response,
     getRequestUrl: (state): string => state.apiRequest.url,
@@ -101,6 +114,10 @@ export const useMainStore = defineStore('main', {
       if (typeof window !== 'undefined') {
         localStorage.setItem('funderWalletId', funderWalletId)
       }
+    },
+
+    setRiskSignals(riskSignals: RiskSignals) {
+      this.riskSignals = riskSignals
     },
 
     setRequestUrl(url: string) {

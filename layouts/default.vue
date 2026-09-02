@@ -40,6 +40,29 @@
         <v-list-group>
           <template #activator="{ props }">
             <v-list-item v-bind="props">
+              <v-list-item-title>Digital Asset Accounts</v-list-item-title>
+            </v-list-item>
+          </template>
+
+          <v-list-item to="/debug/daa" exact>
+            <v-list-item-title class="list-items"> Overview </v-list-item-title>
+          </v-list-item>
+
+          <v-list-item
+            v-for="(item, i) in daaLinks"
+            :key="`daaLinks-${i}`"
+            :to="item.to"
+            exact
+          >
+            <v-list-item-title class="list-items">
+              {{ item.title }}
+            </v-list-item-title>
+          </v-list-item>
+        </v-list-group>
+
+        <v-list-group>
+          <template #activator="{ props }">
+            <v-list-item v-bind="props">
               <v-list-item-title>Payments APIs</v-list-item-title>
             </v-list-item>
           </template>
@@ -239,6 +262,37 @@
               </v-form>
             </v-expansion-panel-text>
           </v-expansion-panel>
+
+          <!-- Risk Signals Settings -->
+          <v-expansion-panel>
+            <v-expansion-panel-title> Risk Signals </v-expansion-panel-title>
+            <v-expansion-panel-text>
+              <v-form>
+                <v-text-field
+                  v-model="riskSignalIpAddress"
+                  label="IP Address"
+                  variant="outlined"
+                  class="mb-4"
+                />
+                <v-text-field
+                  v-model="riskSignalSessionId"
+                  label="Session ID"
+                  variant="outlined"
+                  class="mb-4"
+                />
+                <v-text-field
+                  v-model="riskSignalDeviceId"
+                  label="Device ID"
+                  variant="outlined"
+                  class="mb-4"
+                />
+                <p class="subtitle-2 font-weight-light">
+                  Risk signals for the end user initiating the request. Required
+                  when creating wire accounts.
+                </p>
+              </v-form>
+            </v-expansion-panel-text>
+          </v-expansion-panel>
         </v-expansion-panels>
       </div>
     </v-navigation-drawer>
@@ -247,6 +301,89 @@
 
 <script setup lang="ts">
 const store = useMainStore()
+
+const daaLinks = [
+  {
+    title: 'POST /accounts',
+    to: '/debug/daa/accounts/create',
+  },
+  {
+    title: 'GET /accounts',
+    to: '/debug/daa/accounts/fetch',
+  },
+  {
+    title: 'GET /accounts/{id}',
+    to: '/debug/daa/accounts/details',
+  },
+  {
+    title: 'POST /banks/wires',
+    to: '/debug/daa/wires/create',
+  },
+  {
+    title: 'GET /banks/wires',
+    to: '/debug/daa/wires/fetch',
+  },
+  {
+    title: 'GET /banks/wires/{id}',
+    to: '/debug/daa/wires/details',
+  },
+  {
+    title: 'GET /banks/wires/{id}/instructions',
+    to: '/debug/daa/wires/instructions',
+  },
+  {
+    title: 'POST /accounts/transfers',
+    to: '/debug/daa/transfers/create',
+  },
+  {
+    title: 'GET /accounts/transfers',
+    to: '/debug/daa/transfers/fetch',
+  },
+  {
+    title: 'GET /accounts/transfers/{id}',
+    to: '/debug/daa/transfers/details',
+  },
+  {
+    title: 'GET /accounts/transactions',
+    to: '/debug/daa/transactions/fetch',
+  },
+  {
+    title: 'POST /accounts/withdrawals',
+    to: '/debug/daa/withdrawals/create',
+  },
+  {
+    title: 'GET /accounts/withdrawals',
+    to: '/debug/daa/withdrawals/fetch',
+  },
+  {
+    title: 'GET /accounts/withdrawals/{id}',
+    to: '/debug/daa/withdrawals/details',
+  },
+  {
+    title: 'POST /accounts/addresses/deposit',
+    to: '/debug/daa/addresses/deposit/create',
+  },
+  {
+    title: 'GET /accounts/addresses/deposit',
+    to: '/debug/daa/addresses/deposit/fetch',
+  },
+  {
+    title: 'POST /addresses/recipient',
+    to: '/debug/daa/addresses/recipient/create',
+  },
+  {
+    title: 'GET /addresses/recipient',
+    to: '/debug/daa/addresses/recipient/fetch',
+  },
+  {
+    title: 'DELETE /addresses/recipient/{id}',
+    to: '/debug/daa/addresses/recipient/delete',
+  },
+  {
+    title: 'GET /accounts/deposits',
+    to: '/debug/daa/deposits/fetch',
+  },
+]
 
 const coreLinks = [
   {
@@ -601,6 +738,24 @@ const walletId = computed({
 const funderWalletId = computed({
   get: () => store.getFunderWalletId,
   set: (value: string) => store.setFunderWalletId(value),
+})
+
+const riskSignalIpAddress = computed({
+  get: () => store.getRiskSignals.ipAddress,
+  set: (value: string) =>
+    store.setRiskSignals({ ...store.getRiskSignals, ipAddress: value }),
+})
+
+const riskSignalSessionId = computed({
+  get: () => store.getRiskSignals.sessionId,
+  set: (value: string) =>
+    store.setRiskSignals({ ...store.getRiskSignals, sessionId: value }),
+})
+
+const riskSignalDeviceId = computed({
+  get: () => store.getRiskSignals.deviceId,
+  set: (value: string) =>
+    store.setRiskSignals({ ...store.getRiskSignals, deviceId: value }),
 })
 </script>
 
