@@ -1,4 +1,5 @@
 import { daaInstance, nullIfEmpty } from './client'
+import type { RiskSignals } from './wiresApi'
 
 export interface CreateWithdrawalPayload {
   idempotencyKey: string
@@ -17,6 +18,7 @@ export interface CreateWithdrawalPayload {
   toAmount?: {
     currency: string
   }
+  riskSignals: RiskSignals
 }
 
 const WITHDRAWALS_PATH = '/v1/accounts/withdrawals'

@@ -1,4 +1,5 @@
 import { daaInstance, nullIfEmpty } from './client'
+import type { RiskSignals } from './wiresApi'
 
 export interface BlockchainDestination {
   type: string
@@ -25,6 +26,7 @@ export interface CreateTransferPayload {
   destination: BlockchainDestination | AccountDestination
   amount: Amount
   source?: Source
+  riskSignals: RiskSignals
 }
 
 const TRANSFERS_PATH = '/v1/accounts/transfers'

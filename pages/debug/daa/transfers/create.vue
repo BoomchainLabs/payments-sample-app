@@ -99,6 +99,7 @@ const makeApiCall = async () => {
     ...(formData.sourceId && {
       source: { type: 'account', id: formData.sourceId },
     }),
+    riskSignals: { ...store.getRiskSignals },
   }
 
   try {

@@ -303,7 +303,8 @@
                 />
                 <p class="subtitle-2 font-weight-light">
                   Risk signals for the end user initiating the request. Required
-                  when creating wire accounts.
+                  when creating wire accounts, withdrawals, transfers, or
+                  recipient addresses.
                 </p>
               </v-form>
             </v-expansion-panel-text>

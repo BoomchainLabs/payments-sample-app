@@ -110,6 +110,7 @@ const makeApiCall = async () => {
     ...(formData.toCurrency && {
       toAmount: { currency: formData.toCurrency },
     }),
+    riskSignals: { ...store.getRiskSignals },
   }
   try {
     await $daaWithdrawalsApi.createWithdrawal(payloadData)

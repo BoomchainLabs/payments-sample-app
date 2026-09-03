@@ -96,6 +96,7 @@ const makeApiCall = async () => {
     currency,
     description,
     clientEntityId,
+    riskSignals: { ...store.getRiskSignals },
   }
 
   if (hasAddressTagSupport(chain)) {

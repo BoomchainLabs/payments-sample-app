@@ -1,4 +1,5 @@
 import { daaInstance, nullIfEmpty } from './client'
+import type { RiskSignals } from './wiresApi'
 
 export interface CreateDepositAddressPayload {
   idempotencyKey: string
@@ -15,6 +16,7 @@ export interface CreateRecipientAddressPayload {
   currency?: string
   description: string
   clientEntityId?: string
+  riskSignals: RiskSignals
 }
 
 const DEPOSIT_PATH = '/v1/accounts/addresses/deposit'
